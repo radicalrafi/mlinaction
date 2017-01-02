@@ -1,5 +1,5 @@
 import numpy as np
-
+"""bayes classification is quite great """
 
 def load_dataset():
     postingList = [['my','dog','has','flea','problems','please','help'],
