@@ -1,5 +1,5 @@
 import numpy as np
-"""bayes classification is quite great """
+
 
 def load_dataset():
     postingList = [['my','dog','has','flea','problems','please','help'],
@@ -27,13 +27,44 @@ def words2vec(vocabList, inputSet):
             print "word %s is not in the vocabulary" % word
     return returnVec
 
+def bagOfWords2Vec(vocabList,inputSet):
+    returnVec = [0]*(len(vocabList))
+    for word in inputSet:
+        if word in vocabList:
+            returnVec[vocabList.index(word)] += 1
+    return returnVec
+
+def bayes_classify(vec2Classify,p0Vec,p1Vec,pClass1):
+    p1 = sum(vec2Classify * p1Vec) + np.log(pClass1)
+    p0 = sum(vec2Classify * p0Vec) + np.log(1.0 - pClass1)
+
+    if p1 > p0:
+        return 1
+    else :
+        return 0
+
+def test_bayes():
+    listOfPosts,listClasses = load_dataset()
+    myVocabList = create_vocab_list(listOfPosts)
+    trainMat = []
+    for post in listOfPosts:
+        trainMat.append(words2vec(myVocabList,post))
+    p0,p1,pAb = train_bayes_classifier(np.array(trainMat),np.array(listClasses))
+    test1 = ['i','love','my','dalmatian']
+    test2 = ['i','hate','you','stupid']
+    doc1 = np.array(words2vec(myVocabList,test1))
+    doc2 = np.array(words2vec(myVocabList,test2))
+    print test1, " as ",bayes_classify(doc1,p0,p1,pAb)
+    print test2, " as ",bayes_classify(doc2,p0,p1,pAb)
+
+
 def train_bayes_classifier(trainMatrix, trainCategory):
     numTrainDocs = len(trainMatrix)
     numWords = len(trainMatrix[0])
     #get probabilities of each category
     pAbusive = sum(trainCategory)/float(numTrainDocs)
-    p0num = zeros(numWords)
-    p1num = zeros(numWords)
+    p0num = np.zeros(numWords)
+    p1num = np.zeros(numWords)
     p0denom = 0.0
     p1denom = 0.0
     for i in range(numTrainDocs):
@@ -41,10 +72,12 @@ def train_bayes_classifier(trainMatrix, trainCategory):
             p1num += trainMatrix[i]
             p1denom += sum(trainMatrix[i])
         else:
-            p0num += trianMatrix[i]
+            p0num += trainMatrix[i]
             p0denom += sum(trainMatrix[i])
 
     p1Vec = p1num/p1denom
     p0Vec = p0num/p0denom
 
     return p0Vec,p1Vec,pAbusive
+
+#spam test lines
