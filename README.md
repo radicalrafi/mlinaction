@@ -1,3 +1,3 @@
-##Descritption
-Repo contains code and some sample exercices for Machine Learning in Action Book
+## Descritption
+Repo contains code and some implementations of statistical learning algorithms (kNN,SVM ...) 
 
